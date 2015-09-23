@@ -1,0 +1,101 @@
+(define (count-ums sent)
+  (if (= (count sent) 1 )
+    (if (equal? 'um (first sent)) 1 0)
+    (if (equal? 'um (first sent))
+        (+ 1 (count-ums (bf sent)))
+        (count-ums (bf sent)))
+  )
+)
+
+(count-ums '(today um we are um going to um talk about the um combining um method))
+
+
+(define (countdown count)
+  (if (= count 0)
+    'blastoff!
+    (se count (countdown (- count 1)))
+  )
+)
+
+(countdown 3)
+
+(define (numbers sent)
+  (if (= (count sent) 1 )
+    (if (number? (first sent)) (first sent) '())
+    (if (number? (first sent))
+        (se (first sent) (numbers (bf sent)))
+        (numbers (bf sent)))
+  )
+)
+
+(numbers '(76 trombones and 110 cornets))
+
+
+(define (describe-time seconds)
+  (cond ((< seconds 60)
+      (se (word seconds) 'seconds)
+    )
+    ((< seconds (* 60 60)) (se
+      (se (quotient seconds (* 60)) 'minutes)
+      (describe-time (modulo seconds (* 60)))
+    ))
+    ((< seconds (* 60 60 24)) (se
+      (se (quotient seconds (* 60 60)) 'hours)
+      (describe-time (modulo seconds (* 60 60)))
+    ))
+    ((< seconds (* 60 60 24 7)) (se
+      (se (quotient seconds (* 60 60 24)) 'days)
+      (describe-time (modulo seconds (* 60 60 24)))
+    ))
+    ((< seconds (* 60 60 24 365.25)) (se
+      (se (quotient seconds (* 60 60 24 7)) 'weeks)
+      (describe-time (modulo seconds (* 60 60 24 7)))
+    ))
+    ((< seconds (* 60 60 24 365.25 100)) (se
+      (se (quotient seconds (* 60 60 24 365.25)) 'years)
+      (describe-time (modulo seconds (* 60 60 24 365.25)))
+    ))
+    (else (se
+      (se (quotient seconds (* 60 60 24 365.25 100)) 'centuries)
+      (describe-time (modulo seconds (* 60 60 24 365.25 100)))
+    ))
+  )
+)
+(describe-time 4967189641)
+
+(define (remove-once wrd sent)
+  (if (= (count sent) 1)
+    (if (equal? (first sent) wrd) '() sent)
+    (if (equal? (first sent) wrd)
+      (butfirst sent)
+      (se (first sent) (remove-once wrd (butfirst sent)))
+    )
+  )
+)
+
+(remove-once 'morning '(good morning good morning))
+
+(define (differences sent)
+  (if (<= (count sent) 1)
+    '()
+    (se (- (first (bf sent))(first sent))
+	  (differences (bf sent)))
+)
+)
+
+(differences '(4 23 9 87 6 12))
+
+(define (location wrd sent)
+  (if (<= (count sent) 1)
+    (if (equal? wrd (last sent))
+      1
+      #f
+    )
+    (if (equal? wrd (last sent))
+      (count sent)
+      (location wrd (bl sent))
+    )
+  )
+)
+
+(location 'me '(you never give me your money))
